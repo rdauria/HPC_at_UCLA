@@ -1,0 +1,111 @@
+# Navigating the unix command line
+
+ls  
+
+ls -a
+
+ls -lh
+
+ls -lat
+
+ls -latrh
+
+pwd
+
+cd $SCRATCH
+
+pwd
+
+timestamp=`date "+%F_%H-%M"`; mkdir $HOME/H2HH_$timestamp; cd $HOME/H2HH_$timestamp
+
+pwd
+
+rmdir $HOME/H2HH_$timestamp
+
+ls $HOME/H2HH_$timestamp
+
+cd $HOME; pwd
+
+# Global nvironmental variables
+
+echo $HOME
+
+echo $SCRATCH  # Hoffman2-specific
+
+echo $PATH
+
+echo $LD_LIBRARY_PATH
+
+echo $SHELL
+
+# Local environmental variables, e.g.:
+
+timestamp=`date "+%F_%H-%M"`; echo $timestamp
+
+# Checking the content of text files (w/out editing them):
+
+less $HOME/.bashrc    # Type `q` to exit
+
+more $HOME/.bashrc    # Type `q` to exit 
+
+cat $HOME/.bashrc
+
+head $HOME/.bashrc
+
+head -n 5 $HOME/.bashrc
+
+tail $HOME/.bashrc
+
+tail -n 5 $HOME/.bashrc
+
+## on the fly tailing of a file that is being written:
+
+tail -f /u/systems/UGE8.6.4/hoffman2/common/accounting    # Type `Ctr C` to exit
+
+# Editing file
+
+nano  # `Ctrl X` to exit
+
+emacs # `Ctrl C Ctrl C` to exit
+
+vi    # `Shift : q` to exit
+ 
+# Apps on the H2C & environmental modules
+
+module av --no-pager
+
+module av matlab
+
+module av python
+
+module av R
+
+modules_lookup -a
+
+ls /u/local/apps
+
+which R
+
+module av R
+
+modules_lookup -m R
+
+module load gcc/10.2.0; module load R/4.3.0
+
+which R
+
+which python
+
+python --version
+
+which python3
+
+module av python
+
+module load python/3.7.2
+
+which python3
+
+module load anaconda3
+
+which python
