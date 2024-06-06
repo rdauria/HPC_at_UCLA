@@ -7,6 +7,6 @@ https://nbviewer.org/github/rdauria/HPC_at_UCLA/blob/main/InteractiveComputingon
 
 **NOTE** to see the jupyter notebooks as slides, for example for InteractiveComputingonH2C.ipynb, visit:
 
-https://nbviewer.org/format/slides/github/rdauria/HPC_at_UCLA/blob/main/InteractiveComputingonH2C.ipynb
+https://nbviewer.org/format/slides/github/rdauria/HPC_at_UCLA/blob/main/Batch_Jobs_on_H2C.ipynb
 
-(modify the ending of the address above to visualize a different notebook, e.g., to visualize INTRO_TO_H2C.ipynb visit: https://nbviewer.org/format/slides/github/rdauria/HPC_at_UCLA/blob/main/INTRO_TO_H2C.ipynb).
+(modify the ending of the address above to visualize a different notebook, e.g., to visualize Jupyter-on-H2C.ipynb visit: https://nbviewer.org/format/slides/github/rdauria/HPC_at_UCLA/blob/main/Jupyter-on-H2C.ipynb).
