@@ -1,0 +1,181 @@
+## to run the presentation as a jupyter notebook, open a terminal on your local computer (do not log onto the cluster) and:
+
+curl -O https://raw.githubusercontent.com/rdauria/jupyter-notebook/main/h2jupynb
+
+## Note from a Windows PowerShell you will need to use instead:
+
+curl.exe -O https://raw.githubusercontent.com/rdauria/jupyter-notebook/main/h2jupynb
+
+# assuming that you have python installed on your local computer, issue (substitute <YOURHOFFMAN2ACCOUNTNAME> w/ your H2C username):
+
+python h2jupynb -u <YOURHOFFMAN2ACCOUNTNAME> # you will be prompted for your H2C password twice
+
+# NOTE you may need to use `python3` instead of `python`
+
+python3 h2jupynb -u <YOURHOFFMAN2ACCOUNTNAME> # you will be prompted for your H2C password twice
+
+## NOTE python 3.8.x WILL NOT WORK!!! THIS VERSION OF PYTHON IS DEPRECATED 
+
+# when the jupyter session starts, open a terminal (on the jupyter interface) and issue:
+
+curl -O https://raw.githubusercontent.com/rdauria/HPC_AT_UCLA/refs/heads/master/InteractiveComputingonH2C.ipynb
+
+# return to the jupyter landing page and double click on: InteractiveComputingonH2C.ipynb
+
+## to follow the presentation from a terminal, open a terminal on your local computer and SSH into the Hoffman2 Cluster with the command (substitute <YOURHOFFMAN2ACCOUNTNAME> w/ your Hoffman2 user name):
+
+ssh <YOURHOFFMAN2ACCOUNTNAME>@hoffman2.idre.ucla.edu
+
+## to check what type of nodes are available on the cluster
+
+CLUSTER_AT_A_GLANCE
+
+## to check what type of GPUs are available on the cluster & their availability
+
+GPU_NODES_AT_A_GLANCE_WITH_USED_GPUs
+
+## What computational resources do I have access to?
+
+myreosurces
+
+## Requesting an interactive session:
+
+qrsh
+
+## Custumizing your interacrtive session (memory, runtime, etc.)
+
+# requesting an interactive session with a runtime of 12 hours:
+
+qrsh -l h_rt=12:00:00
+
+# requesting an interactive session with 4GB of memory per computing core:
+
+qrsh -l h_data=4G
+
+# requesting an entire node (all its memory and cores):
+
+qrsh -l exclusive
+
+# requesting a session on a group owned node:    
+
+qrsh -l highp
+
+# requesting a session on a node with a GPU card
+
+qrsh -l gpu,cuda=1
+
+# requesting multiple computing cores all on the same node:
+
+qrsh -pe shared 8
+
+# requesting multiple computing cores from any node on the cluster:
+
+qrsh -pe dc* 42
+
+# request an interactive session for 1 hour with 4GB per core and 6 cores on the same node:
+
+qrsh -l h_rt=1:00:00,h_data=4G -pe shared 6
+
+# request an interactive session for 2 hours with 3GB per core and 48 cores across any node:
+
+qrsh -l h_rt=2:00:00,h_data=3G -pe dc* 48
+
+# request a session on a specific GPU card issue at the command prompt
+# first check if the card is available via: GPU_NODES_AT_A_GLANCE_WITH_USED_GPUs
+
+qrsh -l gpu,P4,cuda=1,h_rt=3:00:00
+
+# check the CUDA GPU nodes (you may not have access to all) and their running jobs, issue at the command line:
+
+qhost -l cuda.0.name=* -q -j
+
+## check all applications available on H2C via environmental modules:
+
+all_apps_via_modules
+
+# even better:
+
+modules_lookup -a
+
+# to look for a specific application, for example the statistical package R:
+
+modules_lookup -m R
+
+# you can also check:
+
+ls /u/local/apps
+
+## load an application in your environment
+
+# is R available in your environment yet?
+which R
+
+# load a specific version of R:
+module load gcc/10.2.0; module load R/4.3.0
+
+# check which version of R is available in your environment:
+which R
+
+# Find the version of python that is right for you:
+
+which python
+
+python --version
+
+module av python anaconda mamba
+
+module load python/3.9.6
+
+which python
+
+python --version
+
+module unload python/3.9.6; module load mamba ### NO NEED TO INITIALIZE MAMBA/CONDA!!!
+
+which python
+
+python --version
+
+##  CREATION OF PYTHON VIRTUAL ENVIRONMENTS:
+
+# request an interactive session:
+qrsh -l h_data=10G  # you can modify the resources requested as needed
+
+# load python/3.9.6
+module load python
+
+# create the python virtual environment:
+python -m venv $HOME/.virtualenvs/<NAME-OF-VIRT-ENV>
+
+# activate the python virtual environment:
+source $HOME/.virtualenvs/<NAME-OF-VIRT-ENV>/bin/activate
+
+# install packages from a requiremens file:
+
+pip install -r requirements.txt
+
+# install ipykernl so that you can access the envvironment from a jupyter session:
+pip install ipykernel 
+python -m ipykernel install --user --name <NAME-OF-VIRT-ENV --display-name <NAME-OF-VIRT-ENV
+
+## CREATION OF CONDA/MAMBA VIRTUAL ENVIRONMENTS:
+
+# request an interactive session:
+qrsh -l h_data=5G
+
+# load mamba in your environemnt:
+module load mamba ######### NOTE: no need to initialize anaconda or mamba!!!
+
+# create the "mynewenv" virtual environment:
+echo y| conda create --name mynewenv
+
+# activate the environment:
+conda activate mynewenv
+
+# install ipykernl so that you can access the envvironment from a jupyter session:
+echo y | conda install ipykernel 
+python -m ipykernel install --user --name "mynewenv" --display-name "mynewenv"
+
+# to deactivate:
+
+mamba deactivate

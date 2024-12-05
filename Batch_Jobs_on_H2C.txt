@@ -1,0 +1,170 @@
+## Run this presentation as a Jupyter Notebook
+
+# ** you should have python installed on your local computer**
+
+# open a terminal (not connected to the cluster) and issue:
+curl -O https://raw.githubusercontent.com/rdauria/jupyter-notebook/main/h2jupynb
+
+# NOTE: from a Windows PowerShell you may need to use instead:
+
+curl.exe -O https://raw.githubusercontent.com/rdauria/jupyter-notebook/main/h2jupynb
+
+# start a jupyter session with:
+python h2jupynb -u <YOURHOFFMAN2ACCOUNTNAME> # you will be prompted for your H2C password twice
+
+# note you may need to use `python3` instead of python:
+python3 h2jupynb -u <YOURHOFFMAN2ACCOUNTNAME> # you will be prompted for your H2C password twice
+
+## NOTE python 3.8.x WILL NOT WORK!!! THIS VERSION OF PYTHON IS DEPRECATED 
+
+# when the jupyter session starts, open a terminal (on the jupyter interface) and issue:
+curl -O https://raw.githubusercontent.com/rdauria/HPC_AT_UCLA/refs/heads/master/Batch_Jobs_on_H2C.ipynb
+
+## Hands on submitting a batch job:
+# We will create a unique directory in your $HOME and copy in it a submission script
+
+# create a unique time stamp and save it in the variable timestamp
+timestamp=`date "+%F"` 
+
+# create a time-stamped directoryand and cd to it:
+mkdir $HOME/HPC_AT_UCLA_$timestamp; cd $HOME/HPC_AT_UCLA_$timestamp; pwd
+
+# if the submission script submit_job.sh is not there yet fetch a copy from /u/local/apps/submit_scripts
+if [ ! -f "submit_job.sh" ]; then 
+   cp /u/local/apps/submit_scripts/submit_job.sh ./submit_job.sh
+else 
+   echo "File: submit_job.sh already present"; 
+fi 
+
+# check that the submission script has been copied in the current directory:
+ls -l submit_job.sh 
+
+# let's take a look at the submission script:
+cat submit_job.sh
+
+## Submit the batch job:
+
+# now submit the job (use the scheduler command: qsub): 
+qsub submit_job.sh 
+
+# is my job running? 
+myjobs 
+
+# save the job ID number into the variable $JOB_ID for later use:
+JOB_ID=`myjob | grep submit_job | awk '{print $1}'`
+
+# echo the JOB_ID:
+echo "JOB_ID=$JOB_ID"
+
+# you can change the resources requested at the command line (this will take over anything in the job script):
+qsub -l h_data=10G,h_rt=3:00:00 -pe shared 4 submit_job.sh
+
+## WHEN WILL MY JOB START?
+
+# Let's see how many jobs are currently pending:
+
+# tot. no. of currently jobs pending 
+qstat -s p | grep qw | wc -l
+
+#Let's count the total number of compute cores requested using some handy command line expressions:
+count=1; qstat -s p | grep qw | awk -v count=$count '{count=count+$8} END {print "Total no. of cores requested: "count}'
+
+# Let's see how many jobs are currently running:
+
+# tot. no. of jobs running
+qstat -s r | grep r | wc -l
+
+#Let's count the total number of compute cores currently running jobs using some handy command line expressions: 
+count=1 ; val=0 ; qstat -s r | grep @ | awk -v count=$count '{count=count+$9} END {print "Total no. of cores in use: "count}'
+
+## THE JOBLOG FILE:
+
+# let's take a look at the joblog file: 
+cat joblog.${JOB_ID}
+
+# see the lines coming from the `echo` blocks in the submission script `submit_job.sh`
+
+## R example
+# We will copy a sample R script and a sample R sumission script and submit it to the queues:
+
+# let's make sure we are in the right directory:
+cd $HOME/HPC_AT_UCLA_$timestamp; pwd
+
+# let's copy an R script:
+if [ ! -f R-benchmark-25.R ]; then 
+  cp /u/local/apps/submit_scripts/R/R-benchmark-25.R ./
+fi
+
+# let's copy an R submission script:
+if [ ! -f R_submit.sh ]; then 
+  cp /u/local/apps/submit_scripts/R/R_submit.sh ./
+fi
+
+# Let's look inside the submission script:
+cat R_submit.sh
+
+# let's submit the job (we will save the $JOB_ID inside a variable):
+qsub R_submit.sh
+
+# we will save the $JOB_ID inside a variable:
+JOB_ID_R=`myjob | grep R_submi | tail -n 1 | awk '{print $1}'` 
+echo $JOB_ID_R
+
+# check the status of the job:
+myjob
+
+# look inside the outout:
+cat R-benchmark-25.output.$JOB_ID_R
+
+# look inside the joblog:
+cat joblog.$JOB_ID_R
+
+## ARRAY JOBS:
+
+#Hands-on example: We are going to solve a toy embarrassingly parallel workload first serially and then as an array job
+
+# let's make sure we are in the right directory:
+cd $HOME/HPC_AT_UCLA_$timestamp; pwd
+
+DIR_ARRAY=$HOME/HPC_AT_UCLA_$timestamp/ARRAY_TEST
+if [ ! -d ${DIR_ARRAY} ]; then 
+  cp -rp /u/local/apps/submit_scripts/array_jobs/ARRAY_TEST ${DIR_ARRAY}
+  cd ${DIR_ARRAY}
+fi
+ls -latr
+
+# file listing the day of the week:
+cat days.txt
+
+# script that manipulates (sequentially each line of the text file days.txt)
+cat mysequentialjob.py 
+
+# MODIFIED SCRIPT THAT ONLY ACTS ON ONE LINE OF THE days.txt FILE:
+cat myarrayjob.py
+
+# Array jobs - solving an embarassangly parallel problem with an array job: 
+cat submit_array.sh
+
+# submist the array job:
+qsub submit_array.sh 
+
+# save the $JOB_ID in a varilable for later use:
+JOB_ID2=`myjob | grep submit_arr | tail -n 1 | awk '{print $1}'` 
+
+# check the output directory:
+ls -latr OUT_ARRAY
+
+# let's look in the output files:
+cat OUT_ARRAY/myarrayjob.joblog.$JOB_ID2.3
+
+cat OUT_ARRAY/myarrayjob.joblog.$JOB_ID2.1
+
+cat OUT_ARRAY/myarrayjob.output.${JOB_ID2}.6
+
+# Putting the output together:
+for i in `seq 1 7`; do 
+    cat OUT_ARRAY/myarrayjob.output.${JOB_ID2}.$i >> my_days_of_the_week.txt
+done
+
+# Done :)
+cat my_days_of_the_week.txt
