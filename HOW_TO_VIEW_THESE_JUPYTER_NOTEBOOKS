@@ -1,6 +1,6 @@
-**NOTE** to render the notebooks correctly navigate to: https://nbviewer.org/ and enter in the search bar the full address of a notebook (e.g., https://github.com/rdauria/HPC_at_UCLA/blob/main/InteractiveComputingonH2C.ipynb). Or, to render correctly InteractiveComputingonH2C.ipynb as a jupyter notebook visit:
+**NOTE** to render the notebooks correctly navigate to: https://nbviewer.org/ and enter in the search bar the full address of a notebook (e.g., https://github.com/rdauria/HPC_at_UCLA/blob/main/Interactive_Computing_on_H2C.ipynb). Or, to render correctly Interactive_Computing_on_H2C.ipynb as a jupyter notebook visit:
 
-https://nbviewer.org/github/rdauria/HPC_at_UCLA/blob/main/InteractiveComputingonH2C.ipynb
+https://nbviewer.org/github/rdauria/HPC_at_UCLA/blob/main/Interactive_Computing_on_H2C.ipynb
 
 (modify the ending of the address above to visualize a different notebook, e.g., to visualize INTRO_TO_H2C.ipynb visit: https://nbviewer.org/github/rdauria/HPC_at_UCLA/blob/main/INTRO_TO_H2C.ipynb).
 

@@ -1,4 +1,16 @@
+### On the Hoffman2 Cluster CLI:
+
+# What type of compute nodes?
+
+CLUSTER_AT_A_GLANCE
+
+# What type of GPU nodes (available to all users)
+
+GPU_NODES_AT_A_GLANCE_WITH_USED_GPUs
+
 # Navigating the unix command line
+
+## listing files `ls [options]`
 
 ls  
 
@@ -10,23 +22,180 @@ ls -lat
 
 ls -latrh
 
-pwd
-
-cd $SCRATCH
+## which directory are we in? `pwd`
 
 pwd
 
-timestamp=`date "+%F_%H-%M"`; mkdir $HOME/H2HH_$timestamp; cd $HOME/H2HH_$timestamp
+## change directory `cd /path/to/dir`:
 
-pwd
+cd $SCRATCH; pwd
 
-rmdir $HOME/H2HH_$timestamp
+## go back to the previous directory you were in `cd -`:
 
-ls $HOME/H2HH_$timestamp
+cd -
 
-cd $HOME; pwd
+## go to your $HOME directory from wheereever:
 
-# Global nvironmental variables
+cd
+
+# or:
+
+cd $HOME
+
+# or:
+
+cd ~
+
+## let's create a new directory:
+
+mkdir HPC_AT_UCLA; cd HPC_AT_UCLA; pwd
+
+## let's navigate back (`cd -`) and remove the new and empty directory (`rmdir`)
+
+cd - ; rmdir HPC_AT_UCLA
+
+## we have removed the directory so the following commands will fail:
+
+ls HPC_AT_UCLA; cd HPC_AT_UCLA
+
+# Getting help
+
+man ls    # type `q` to exit
+info ls   # type `q` to exit
+ls --help
+
+# Shell meta-characters: \ / < > ! $ % ^ & * | { } [ ] " ' ` ~ ; 
+
+# using `date` to create a unique file name:
+
+timestamp=$(date "+%F_%H-%M")
+
+## using `>` to redirect the output of a preceding command to a file:
+
+echo "Lorem ipsum dolor sit amet, consectetur adipiscing elit..." > myfile.$timestamp
+cat myfile.$timestamp
+
+## appending to a file (`>>`):
+
+echo "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." >> myfile.$timestamp; cat myfile.$timestamp
+
+## overwriting a file (`echo text > file`):
+
+echo "TESTING TESTING" > myfile.$timestamp; cat myfile.$timestamp
+
+## removing a file (`rm -f`):
+
+rm -f myfile.$timestamp
+
+# Compounding commands to generate new and awesome commands!!!
+
+## that's not really compounding but very syntetic use `;` to write consecutive commands on one line:
+
+cd $HOME; pwd ; cd -
+
+# Compounding commands with pipes (|) & introducing pattern matching (grep) 😎
+
+## all jobs on H2C currently pending (use `qstat` scheduler command to query all jobs 
+## w/ option `-s p` option -- status pending):
+
+qstat -s p 
+
+## first 6 lines (pipe the output of the first command into another unix command `head -n 6`):
+
+qstat -s p | head -n 6
+
+## tot. no. of currently jobs pending:
+## remove the header by matching only lines with the patterm _qw_ (`grep qw`) 
+## and count the number of lines (`wc -l`)
+
+qstat -s p | grep qw | wc -l
+
+# The magic of `sed` (stream editor for filtering and transforming text)
+
+## use `echo -e` to write several line of text which we will then save in a file:
+
+echo -e " Agamemnon, (999) 333-1212, agamemnon999@iliad.edu \\n Patroclus, (999) 333-1213, patroclus@iliad.edu \\n Odysseus, (123) 123-1234, wiley@homer.com" > mynewfile.$timestamp
+
+## display the file with the command `cat`
+
+cat mynewfile.$timestamp
+
+## use `sed` to substitute (`s`) a pattern (999) globally (`g`) -- that is whenever it appears in the file:
+
+sed -e 's/999/310/g' mynewfile.$timestamp
+
+cat mynewfile.$timestamp
+
+## use sed to substitute a pattern globally within an actual file:
+
+sed -i 's/999/310/g' mynewfile.$timestamp
+
+## see more:
+
+sed --help
+
+# The Awesomeness of awk - pattern scanning and processing language
+
+## we can use `awk` for pattern matching:
+
+awk '/iliad/ { print $0 }' mynewfile.$timestamp
+
+## `awk` has built-in variables such as `NR` number of records (generally lines) seen so far:
+
+awk '{print NR;}' mynewfile.$timestamp
+
+## `awk` has patterns such as `END` an `END` block is executed when all the input is exhausted
+
+awk 'END { print NR;}' mynewfile.$timestamp
+
+## we can change the file separator (`awk` variable `FS`) from a space to a '0' with `awk -F 0`
+## then print the first field (anything on a given record that comes before a '0')
+
+awk -F 0 '{print $1}' mynewfile.$timestamp
+cat mynewfile.$timestamp
+
+# tidy up:
+
+rm -rf mynewfile.$timestamp
+
+# awk and regular expressions (string used for string pattern matching)¶
+
+## let's write a file w/ 3 lines of text and then look for any line containing only lower case letters:
+echo -e " ABC \n 123 \n abc" | grep [a-z]
+
+## another way to count the total number of pending jobs:
+
+qstat -s p | awk '$1 ~ /^[0-9]+$/ {print}' | wc -l
+
+##Let's count the total number of compute cores requested using some handy command line expressions:
+
+count=0; qstat -s p | awk '$1 ~ /^[0-9]+$/ {print}' | awk -v count=$count '{count=count+$8} END {print "Total no. of cores requested: "count}'
+
+##or in short:
+
+count=0; qstat -s p | awk -v count=$count '$1 ~ /^[0-9]+$/ {count=count+$8} END {print "Total no. of cores requested: "count}'
+
+## for more of reg exprs: https://www.rexegg.com/regex-quickstart.php#chars
+
+## let's check if there are any running jupyter notebooks started via the h2jupynb script
+## (see https://www.hoffman2.idre.ucla.edu/Using-H2/Connecting/Connecting.html#connecting-via-jupyter-notebook-lab):
+
+qstat -s r | awk '$5=="r" && /JUPYNB/ { print $0 }'
+
+### only the JOB_ID of al jupyter NB, as a space separated list of lines with 3 elements on each? Use `xargs`
+## `xargs` - build and execute command lines from standard input
+
+qstat -s r | awk '$5=="r" && /JUPYNB/ { print $1 }' | xargs -n 3
+
+# `awk` can print nicely w/ `printf`
+
+## get the list of apps in /u/local/apps name and owner (do not show any empty line w/ `sed`):
+
+ls -l /u/local/apps | awk '{printf "%-35s\t %s\n",$9,$3}' | sed '/^[[:space:]]*$/d'
+
+## for more on printf see: https://www.gnu.org/software/gawk/manual/html_node/Printf-Examples.html
+
+# Global nvironmental variables & `echo` command:
 
 echo $HOME
 
@@ -41,6 +210,10 @@ echo $SHELL
 # Local environmental variables, e.g.:
 
 timestamp=`date "+%F_%H-%M"`; echo $timestamp
+
+#Adding a variable for good to your environment
+
+echo "export MYBIN=$HOME/bin" >> $HOME/.bashrc  ## ">>" VERY IMPORTANT!!!!
 
 # Checking the content of text files (w/out editing them):
 
@@ -106,6 +279,6 @@ module load python/3.7.2
 
 which python3
 
-module load anaconda3
+module load mamba
 
 which python
