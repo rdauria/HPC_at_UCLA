@@ -1,2 +1,5 @@
+.gitignore
 .ipynb_checkpoints
 EXTRAS*
+Untitled*
+test.png
