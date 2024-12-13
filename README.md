@@ -11,9 +11,9 @@ The notebooks are meant to be seen in this order:
 
 NOTE: Any notebook which contains cells with bash code, meant to be executed on the cluster, may not render correctly on GitHub. To visualize the notebook correctly:
 
-      - execute  the notebook on the Hoffman2 Cluster itself (see instructions in Jupyter-on-H2C.ipynb)
-      - visualize the notebook through NBviewer (https://nbviewer.org/) -- note: not all notebooks may work
-      - notebooks with bash code also have companions text files that could be used to double check syntax  
+- execute  the notebook on the Hoffman2 Cluster itself (see instructions in Jupyter-on-H2C.ipynb)
+- visualize the notebook through NBviewer (https://nbviewer.org/) -- note: not all notebooks may work
+- notebooks with bash code also have companions text files that could be used to double check syntax  
 
 **NOTE** to render the notebooks correctly navigate to: https://nbviewer.org/ and enter in the search bar the full address of a notebook (e.g., https://github.com/rdauria/HPC_AT_UCLA/blob/master/INTRO_TO_H2C.ipynb):
 
