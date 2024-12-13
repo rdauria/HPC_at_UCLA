@@ -3,13 +3,14 @@ A series of jupyter notebooks with introductory material to computing on the Hof
 
 The notebooks are meant to be seen in this order:
 
-INTRO_TO_H2C.ipynb
-Unix_shell_and_environmental_modules.ipynb
-Jupyter-on-H2C.ipynb
-Interactive_Computing_on_H2C.ipynb
-Batch_Jobs_on_H2C.ipynb
+- INTRO_TO_H2C.ipynb
+- Unix_shell_and_environmental_modules.ipynb
+- Jupyter-on-H2C.ipynb
+- Interactive_Computing_on_H2C.ipynb
+- Batch_Jobs_on_H2C.ipynb
 
 NOTE: Any notebook which contains cells with bash code, meant to be executed on the cluster, may not render correctly on GitHub. To visualize the notebook correctly:
+
       - execute  the notebook on the Hoffman2 Cluster itself (see instructions in Jupyter-on-H2C.ipynb)
       - visualize the notebook through NBviewer (https://nbviewer.org/) -- note: not all notebooks may work
       - notebooks with bash code also have companions text files that could be used to double check syntax  
